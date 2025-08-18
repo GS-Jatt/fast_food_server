@@ -1,9 +1,13 @@
 // use std::sync::Arc;
 
 use crate::{
-    auth::login::{login, login_with_id},
+    auth::{
+        login::{login, login_with_id},
+        signup::signup,
+    },
     cart::{get_cart, update_cart},
     menu::Menu,
+    order::{add_order, get_orders},
 };
 
 use axum::{
@@ -17,9 +21,11 @@ use tower_http::cors::{Any, CorsLayer};
 
 pub mod auth {
     pub mod login;
+    pub mod signup;
 }
 mod cart;
 pub mod menu;
+mod order;
 mod types;
 
 #[tokio::main]
@@ -40,10 +46,11 @@ async fn main() {
     let app = Router::new()
         .route("/", get(root))
         .route("/login", post(login))
+        .route("/signup", post(signup))
         .route("/login/{id}", get(login_with_id))
         .route("/menu", get(get_menu))
         .route("/cart/{id}", get(get_cart).put(update_cart))
-        .route("/foo/bar", get(foo_bar))
+        .route("/order/{id}", get(get_orders).put(add_order))
         .layer(cors_layer)
         .with_state(db);
 
