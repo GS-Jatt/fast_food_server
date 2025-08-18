@@ -13,7 +13,7 @@ use crate::{
 use axum::{
     Json, Router,
     extract::State,
-    http::{Method, StatusCode},
+    http::{HeaderValue, Method, StatusCode},
     routing::{get, post},
 };
 use sqlx::{PgPool, postgres::PgPoolOptions};
@@ -29,16 +29,23 @@ mod order;
 mod types;
 
 #[shuttle_runtime::main]
-async fn main() -> shuttle_axum::ShuttleAxum {
+async fn main(
+    #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
+) -> shuttle_axum::ShuttleAxum {
     let cors_layer = CorsLayer::new()
-        .allow_origin(Any) // Allows requests from any origin (use with caution for public APIs)
+        .allow_origin(
+            "https://fast-order.vercel.app"
+                .parse::<HeaderValue>()
+                .unwrap(),
+        ) // Allows requests from any origin (use with caution for public APIs)
         .allow_methods([Method::GET, Method::POST, Method::PUT]) // Allowed HTTP methods
         .allow_headers(Any); // Allows any headers
+    let db_url = secrets.get("DB_URL").unwrap();
 
     // connect to database
-    let  db = PgPoolOptions::new()
+    let db = PgPoolOptions::new()
         .max_connections(500)
-        .connect("postgresql://neondb_owner:npg_Yr4LB7gMxcsm@ep-cold-pond-a1u0ws28-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
+        .connect(&db_url)
         .await
         .expect("can't connect to database");
     // let shared_pool = Arc::new(db);

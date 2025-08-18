@@ -14,12 +14,12 @@ pub async fn update_cart(
     Json(data): Json<Vec<CartItem>>,
 ) -> Result<StatusCode, StatusCode> {
     let items_json_value = serde_json::to_value(&data).map_err(|_| StatusCode::BAD_REQUEST)?;
-    sqlx::query!(
+    sqlx::query(
         r#"INSERT INTO  cart (id, items) VALUES ($1 , $2)
          ON CONFLICT (id) DO UPDATE SET items= $2 "#,
-        id,
-        items_json_value
     )
+    .bind(id)
+    .bind(items_json_value)
     .execute(&db)
     .await
     .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
