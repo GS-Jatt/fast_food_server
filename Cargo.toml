@@ -7,6 +7,8 @@ edition = "2024"
 axum = { version = "0.8.4", features = ["macros"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.142"
+shuttle-axum = "0.56.0"
+shuttle-runtime = "0.56.0"
 sqlx = { version = "0.8.6", features = [
     "runtime-tokio-rustls",
     "any",

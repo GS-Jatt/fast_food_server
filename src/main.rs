@@ -28,8 +28,8 @@ pub mod menu;
 mod order;
 mod types;
 
-#[tokio::main]
-async fn main() {
+#[shuttle_runtime::main]
+async fn main() -> shuttle_axum::ShuttleAxum {
     let cors_layer = CorsLayer::new()
         .allow_origin(Any) // Allows requests from any origin (use with caution for public APIs)
         .allow_methods([Method::GET, Method::POST, Method::PUT]) // Allowed HTTP methods
@@ -54,10 +54,11 @@ async fn main() {
         .layer(cors_layer)
         .with_state(db);
 
-    // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    println!("server on http://{}", listener.local_addr().unwrap());
-    axum::serve(listener, app).await.unwrap();
+    // // run our app with hyper, listening globally on port 3000
+    // let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    // println!("server on http://{}", listener.local_addr().unwrap());
+    // axum::serve(listener, app).await.unwrap();
+    Ok(app.into())
 }
 
 async fn root() -> &'static str {
