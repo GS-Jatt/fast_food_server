@@ -3,7 +3,7 @@ use axum::{
     extract::{Path, State},
     http::StatusCode,
 };
-use sqlx::{PgPool, Value};
+use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::types::{Order, ResponseErrStr};
