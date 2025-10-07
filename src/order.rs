@@ -31,7 +31,7 @@ pub async fn get_orders(
     State(db): State<PgPool>,
     Path(id): Path<Uuid>,
 ) -> ResponseErrStr<Vec<Order>> {
-    let res = sqlx::query_as::<_, Order>("SELECT * FROM orders WHERE id = $1 ")
+    let res = sqlx::query_as::<_, Order>("SELECT * FROM orders WHERE id = $1 ORDER BY date")
         .bind(id)
         .fetch_all(&db)
         .await
