@@ -11,8 +11,9 @@ use crate::{
 };
 
 use axum::{
-    Router,
-    http::Method,
+    Json, Router,
+    extract::State,
+    http::{HeaderValue, Method, StatusCode},
     routing::{get, post},
 };
 use dotenvy::dotenv;
@@ -33,7 +34,11 @@ async fn main() {
     dotenv().ok();
 
     let cors_layer = CorsLayer::new()
-        .allow_origin(Any) // Allows requests from any origin (use with caution for public APIs)
+        .allow_origin(
+            "https://fast-order.vercel.app"
+                .parse::<HeaderValue>()
+                .unwrap(),
+        ) // Allows requests from any origin (use with caution for public APIs)
         .allow_methods([Method::GET, Method::POST, Method::PUT]) // Allowed HTTP methods
         .allow_headers(Any); // Allows any headers
 
